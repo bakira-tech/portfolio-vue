@@ -1,0 +1,23 @@
+name: CI
+ 
+on:
+  push:
+    branches:
+    - master
+ 
+jobs:
+  build:
+ 
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+      
+    - name: Build
+      run: cd home && yarn install && yarn build
+ 
+    - name: Copy
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_PUT_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_PUT_SECRET_KEY }}
+      run: aws s3 cp home/dist/ s3://vue.portfolio.bakira.tech.bucket/ --recursive
